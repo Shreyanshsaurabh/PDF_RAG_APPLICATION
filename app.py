@@ -9,9 +9,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # Configuration
 # ----------------------------
 load_dotenv()
-
-DB_DIR = "chroma_db"
-
 st.set_page_config(
     page_title="PDF RAG System",
     layout="wide"
@@ -96,13 +93,10 @@ with st.sidebar:
                     ]
 
                     # Create vector database
-                    vectorstore = Chroma.from_documents(
-                        documents=clean_docs,
-                        embedding=embedding_model,
-                        persist_directory=DB_DIR
-                    )
+               vectorstore = st.session_state.vectorstore
 
-                    st.session_state.processed_file = uploaded_file.name
+st.session_state.vectorstore = vectorstore
+st.session_state.processed_file = uploaded_file.name
 
                     st.success(
                         f"Successfully processed {uploaded_file.name}"
@@ -117,7 +111,10 @@ with st.sidebar:
 # ----------------------------
 # Main Chat Interface
 # ----------------------------
-if "processed_file" in st.session_state:
+if (
+    "processed_file" in st.session_state
+    and "vectorstore" in st.session_state
+):
 
     st.info(
         f"Active Document: {st.session_state.processed_file}"
