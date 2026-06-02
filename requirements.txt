@@ -1,92 +1,27 @@
-# Core LLM & RAG Framework
+streamlit
 langchain
 langchain-core
 langchain-community
 langchain-text-splitters
 langchain-mistralai
 
-# Mistral AI
 mistralai
 
-# Embeddings
-sentence-transformers
-huggingface-hub
-
-# Vector Databases
-faiss-cpu
 chromadb
+faiss-cpu
 
-# Document Loaders
 pypdf
 pdfplumber
 pymupdf
-unstructured
-python-docx
-openpyxl
 
-# Text Processing
-tiktoken
-nltk
-spacy
+python-dotenv
 
-# Data Handling
 pandas
 numpy
 
-# API Framework
-fastapi
-uvicorn
-
-# UI (optional)
-streamlit
-
-# Environment Variables
-python-dotenv
-
-# HTTP Requests
 requests
 httpx
 
-# Tokenization & Transformers
-transformers
-accelerate
+tiktoken
 
-# Database Support
-sqlalchemy
-psycopg2-binary
-
-# Logging & Monitoring
-loguru
-
-# Async Support
-aiofiles
-
-# JSON Handling
-orjson
-
-# Utilities
-tqdm
-
-# Validation
 pydantic
-
-# Optional OCR Support
-pytesseract
-pillow
-
-# Optional Web Scraping
-beautifulsoup4
-lxml
-
-# Optional Reranking
-rank-bm25
-
-# Optional Evaluation
-ragas
-datasets
-
-# Optional Caching
-diskcache
-
-# Optional LangSmith Monitoring
-langsmith
