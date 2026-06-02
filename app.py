@@ -9,6 +9,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # Configuration
 # ----------------------------
 load_dotenv()
+
 st.set_page_config(
     page_title="PDF RAG System",
     layout="wide"
@@ -92,16 +93,21 @@ with st.sidebar:
                         if doc.page_content.strip()
                     ]
 
-                    # Create vector database
-               vectorstore = st.session_state.vectorstore
+                    # Create in-memory vector store
+                    vectorstore = Chroma.from_documents(
+                        documents=clean_docs,
+                        embedding=embedding_model
+                    )
 
-st.session_state.vectorstore = vectorstore
-st.session_state.processed_file = uploaded_file.name
+                    # Save in session state
+                    st.session_state.vectorstore = vectorstore
+                    st.session_state.processed_file = uploaded_file.name
 
                     st.success(
                         f"Successfully processed {uploaded_file.name}"
                     )
 
+                    # Clean up temp file
                     if os.path.exists(temp_path):
                         os.remove(temp_path)
 
@@ -117,17 +123,13 @@ if (
 ):
 
     st.info(
-        f"Active Document: {st.session_state.processed_file}"
+        f"📄 Active Document: {st.session_state.processed_file}"
     )
 
     try:
-        from langchain_community.vectorstores import Chroma
         from langchain_core.prompts import ChatPromptTemplate
 
-        vectorstore = Chroma(
-            persist_directory=DB_DIR,
-            embedding_function=embedding_model
-        )
+        vectorstore = st.session_state.vectorstore
 
         retriever = vectorstore.as_retriever(
             search_type="mmr",
@@ -148,9 +150,13 @@ if (
                 (
                     "system",
                     """You are a helpful assistant.
-Use ONLY the provided context.
-If the answer is not in the context,
-say 'I don't know based on the document.'"""
+
+Use ONLY the provided context to answer.
+
+If the answer cannot be found in the context, reply:
+
+"I don't know based on the document."
+"""
                 ),
                 (
                     "human",
@@ -165,12 +171,13 @@ say 'I don't know based on the document.'"""
 
         if query:
 
-            with st.spinner("Searching..."):
+            with st.spinner("Searching document..."):
 
                 docs = retriever.invoke(query)
 
                 context = "\n\n".join(
-                    [doc.page_content for doc in docs]
+                    doc.page_content
+                    for doc in docs
                 )
 
                 chain_input = prompt.format(
